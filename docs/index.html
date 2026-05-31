@@ -190,7 +190,7 @@
   seconds per sixteen-frame clip, at least six times faster than the fastest published feed-forward 4D
   method and more than three orders of magnitude faster than score-distillation pipelines.</p>
   <div class="grid" style="grid-template-columns:1fr">
-    <figure class="card"><video loop autoplay muted playsinline data-src="static/videos/speed_race.mp4" poster="static/videos/speed_race.jpg"></video><figcaption>A wall-clock race on one clip (playback accelerated; the labels are the real per-clip inference seconds). The trained ActionMesh backbone keeps computing for 120&thinsp;s, while the Latent-4D substrate finishes its 4D result in 9.4&thinsp;s and the early-exit variant in 4.96&thinsp;s, roughly 13&times; and 24&times; faster. The two Latent-4D panels already loop a moving 4D mesh long before the backbone returns anything.</figcaption></figure>
+    <figure class="card"><video loop autoplay muted playsinline data-src="static/videos/speed_race.mp4" poster="static/videos/speed_race.jpg"></video><figcaption>A wall-clock race on three clips (playback accelerated; the labels are the real per-clip inference seconds). The trained ActionMesh backbone keeps computing for 120&thinsp;s, while our early-exit variant returns its 4D result in 4.96&thinsp;s, roughly 24&times; faster, and its result is also visibly more temporally coherent than the baseline. Our column already loops a moving 4D mesh long before the backbone returns anything.</figcaption></figure>
   </div>
   <div class="figrow g2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
     <figure class="fig"><img src="static/figures/fig_speed_bar.png" alt="inference time per clip"><figcaption>End-to-end inference time per 16-frame clip on one H200 (log scale).</figcaption></figure>
