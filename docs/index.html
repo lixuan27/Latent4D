@@ -230,6 +230,50 @@
   </table>
 </section>
 
+<!-- 7b. GENERATION PROCESS -->
+<section>
+  <h2>The image-to-4D process, side by side</h2>
+  <p class="sub">The full pipeline on a text-to-video input: each column advances through the same
+  sixteen frames. From the input silhouette (left), the untouched ActionMesh backbone (middle) builds
+  a mesh that wobbles and tears as the motion gets extreme, while the same backbone under the
+  frozen-weight Apex hook (right) keeps a coherent, stably-coloured surface throughout. On this clip
+  the Apex trajectory is five times smoother than the baseline.</p>
+  <div class="grid" style="grid-template-columns:1fr">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/process_cartwheel.mp4" poster="static/videos/process_cartwheel.jpg"></video><figcaption>Input video &rarr; ActionMesh baseline &rarr; Latent-4D-Apex, over the whole clip</figcaption></figure>
+  </div>
+</section>
+
+<!-- 7c. DAVIS ZERO-SHOT -->
+<section>
+  <h2>Zero-shot transfer to real video (DAVIS-2017)</h2>
+  <p class="sub">The Apex hook was calibrated only on the synthetic benchmark, yet it transfers
+  unchanged, with the same four scalars, to real-world DAVIS-2017 footage it never saw. On the hard
+  scenes below it lifts the multi-camera mIoU by up to +9.5 points and makes the trajectory up to 3
+  times smoother. The measured per-scene gains are listed under each clip.</p>
+  <div class="legend"><span class="base">ActionMesh baseline</span><span class="ours">+ Apex (ours)</span></div>
+  <div class="grid g2">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_dance-twirl.mp4" poster="static/videos/davis_dance-twirl.jpg"></video><figcaption>dance-twirl &mdash; mIoU +9.5pp, 2.4&times; smoother</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_camel.mp4" poster="static/videos/davis_camel.jpg"></video><figcaption>camel &mdash; mIoU +6.6pp</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_soapbox.mp4" poster="static/videos/davis_soapbox.jpg"></video><figcaption>soapbox &mdash; mIoU +6.3pp, 1.8&times; smoother</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_breakdance.mp4" poster="static/videos/davis_breakdance.jpg"></video><figcaption>breakdance &mdash; 3.0&times; smoother</figcaption></figure>
+  </div>
+</section>
+
+<!-- 7d. TEXT-TO-4D -->
+<section>
+  <h2>Text-conditioned 4D generation</h2>
+  <p class="sub">Chaining a text-to-video model (Wan2.1) in front of the pipeline lets the whole system
+  accept only a natural-language prompt. The same Apex hook again improves the cases that most stress
+  cross-frame coherence: the trajectory becomes 2.3 to 5 times smoother than the untouched backbone,
+  with the largest gain on the rotation-heavy cartwheel prompt.</p>
+  <div class="legend"><span class="base">ActionMesh baseline</span><span class="ours">+ Apex (ours)</span></div>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cond_cartwheel.mp4" poster="static/videos/cond_cartwheel.jpg"></video><figcaption>&ldquo;a person doing a cartwheel&rdquo; &mdash; 5.0&times; smoother</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cond_soccer_kick.mp4" poster="static/videos/cond_soccer_kick.jpg"></video><figcaption>&ldquo;a child kicking a soccer ball&rdquo; &mdash; 2.6&times; smoother</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cond_skateboard.mp4" poster="static/videos/cond_skateboard.jpg"></video><figcaption>&ldquo;a man riding a skateboard&rdquo; &mdash; 2.3&times; smoother</figcaption></figure>
+  </div>
+</section>
+
 <!-- 8. SECOND BACKBONE L4GM -->
 <section>
   <h2>Transfer to a second 4D backbone: L4GM</h2>
