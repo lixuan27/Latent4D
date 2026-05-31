@@ -23,9 +23,13 @@
       <a class="btn ghost" href="#bibtex">BibTeX</a>
     </nav>
     <div class="hero-video">
-      <video autoplay loop muted playsinline poster="static/videos/cmp_running_humanoid.jpg">
-        <source src="static/videos/cmp_running_humanoid.mp4" type="video/mp4">
-      </video>
+      <div class="vidwrap">
+        <span class="tag tag-l">Baseline<small>120&thinsp;s generation</small></span>
+        <span class="tag tag-r">Ours<small>4.96&thinsp;s generation</small></span>
+        <video autoplay loop muted playsinline poster="static/videos/cmp_running_humanoid.jpg">
+          <source src="static/videos/cmp_running_humanoid.mp4" type="video/mp4">
+        </video>
+      </div>
       <p class="cap">A trained 4D backbone (left of each pair) tears apart over the clip, while the
       same frozen backbone under our inference-time intervention (right) stays temporally coherent.
       Surface colour encodes anchor-frame vertex identity, so a stable colour pattern means the
