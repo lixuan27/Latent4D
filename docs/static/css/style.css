@@ -46,6 +46,7 @@ section{padding:46px 0;border-bottom:1px solid var(--line)}
 h2{font-family:var(--serif);font-weight:600;font-size:1.9rem;letter-spacing:-.01em;margin:0 0 .5rem}
 h3{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:1.6rem 0 .4rem}
 .sub{color:var(--ink-soft);font-size:1.02rem;margin:.2rem 0 1.2rem}
+.note{color:var(--ink-soft);font-size:.92rem;margin:-.4rem 0 1rem;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:inline-block}
 p{color:#2d2a26}
 .lead{font-size:1.16rem;line-height:1.75}
 em.term{font-style:normal;font-weight:600;color:var(--accent)}

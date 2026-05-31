@@ -1,14 +1,15 @@
 """Render result videos for the Latent-4D project page.
 
-Each clip is a 16-frame mesh sequence; we render a fixed-camera view per frame
-(so the visible motion is the real 4D deformation) with anchor-frame
-vertex-identity colour, compose labelled columns with matplotlib, and encode a
-seamless ping-pong loop to mp4 (GIF fallback). Missing sequences are skipped.
+Each clip is a 16-frame mesh sequence rendered with anchor-frame vertex-identity
+colour. Panels are composed mesh-only with a thin colour bar at the top of each
+column (red = baseline, green = ours, teal = frozen read-out) so the columns stay
+unambiguous after video compression; the textual labels live in crisp HTML on the
+page rather than burnt into the (downscaled, blurry) video. Seamless ping-pong loop.
 
 Manifest lines:  mode|uid|name
-  single   one method (Apex output)         -> one labelled video
-  compare  ActionMesh | +Apex               -> two columns
-  triple   TripoSG read-out | +Apex | ActionMesh
+  single   one method (Apex output)
+  compare  ActionMesh | +Apex
+  triple   read-out | +Apex | ActionMesh
 """
 import argparse, os, sys
 import numpy as np, trimesh
@@ -22,10 +23,12 @@ DIRS = {
     "apex": "outputs/large_savc_a0.9_80653",
     "triposg": "outputs/actionbench_route_a_78744",
 }
+RED, GREEN, TEAL = "#b0492f", "#3f7d52", "#2f6db5"
+# (key, colour) per column
 MODES = {
-    "single":  [("apex", "Latent-4D-Apex")],
-    "compare": [("base", "ActionMesh"), ("apex", "+ Latent-4D-Apex")],
-    "triple":  [("triposg", "Latent-4D read-out"), ("apex", "+ Apex"), ("base", "ActionMesh")],
+    "single":  [("apex", GREEN)],
+    "compare": [("base", RED), ("apex", GREEN)],
+    "triple":  [("triposg", TEAL), ("apex", GREEN), ("base", RED)],
 }
 
 
@@ -47,18 +50,19 @@ def strip(key, uid, n, sz):
     return out
 
 
-def compose_frames(cols, labels, n):
+def compose_frames(cols, colors, n):
     frames = []
     K = len(cols)
     for t in range(n):
-        fig, axes = plt.subplots(1, K, figsize=(K * 2.6, 2.8))
+        fig, axes = plt.subplots(1, K, figsize=(K * 2.6, 2.7))
         if K == 1:
             axes = [axes]
         for c in range(K):
             axes[c].imshow(cols[c][t]); axes[c].axis("off")
-            axes[c].set_title(labels[c], fontsize=12,
-                              color="#b00" if labels[c] == "ActionMesh" else "#070")
-        plt.subplots_adjust(left=0.005, right=0.995, top=0.90, bottom=0.005, wspace=0.02)
+            # crisp solid colour bar at the very top of the panel
+            axes[c].add_patch(plt.Rectangle((0.0, 0.965), 1.0, 0.035, transform=axes[c].transAxes,
+                                            color=colors[c], clip_on=False, zorder=5))
+        plt.subplots_adjust(left=0.004, right=0.996, top=0.995, bottom=0.004, wspace=0.015)
         fig.canvas.draw()
         buf = np.frombuffer(fig.canvas.buffer_rgba(), dtype=np.uint8)
         buf = buf.reshape(fig.canvas.get_width_height()[::-1] + (4,))[..., :3].copy()
@@ -69,16 +73,10 @@ def compose_frames(cols, labels, n):
 
 def write_video(frames, out_path, fps=12):
     import imageio
-    seq = frames + frames[-2:0:-1]            # ping-pong loop
-    try:
-        imageio.mimsave(out_path, seq, fps=fps, quality=8, macro_block_size=8)
-        imageio.imwrite(out_path.replace(".mp4", ".jpg"), seq[len(frames) // 2])
-        return out_path
-    except Exception as e:
-        gif = out_path.replace(".mp4", ".gif")
-        imageio.mimsave(gif, seq, fps=fps)
-        print(f"  mp4 failed ({e}); wrote {gif}")
-        return gif
+    seq = frames + frames[-2:0:-1]
+    imageio.mimsave(out_path, seq, fps=fps, quality=9, macro_block_size=8)
+    imageio.imwrite(out_path.replace(".mp4", ".jpg"), seq[len(frames) // 2])
+    return out_path
 
 
 def main():
@@ -101,7 +99,7 @@ def main():
             continue
         print(f"[{mode}] {name} ({uid[:20]})")
         cols = [strip(k, uid, args.frames, args.size) for k in keys]
-        frames = compose_frames(cols, [lab for _, lab in spec], args.frames)
+        frames = compose_frames(cols, [col for _, col in spec], args.frames)
         print("  saved", write_video(frames, os.path.join(args.out, f"{name}.mp4")))
     print("DONE", args.out)
 

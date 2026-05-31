@@ -81,7 +81,8 @@
   <p class="sub">Table 1 of the paper. Each pair shares identical ActionMesh weights; only the
   inference-time Apex hook differs. The untouched backbone collapses on hard motion; Apex keeps the
   shape and the vertex-identity colouring coherent.</p>
-  <div class="legend"><span class="base">ActionMesh baseline</span><span class="ours">+ Latent-4D-Apex (ours)</span></div>
+  <div class="legend"><span class="base">ActionMesh baseline (left)</span><span class="ours">+ Latent-4D-Apex, ours (right)</span></div>
+  <p class="note">In every clip a coloured bar marks each column: <b style="color:#b0492f">red = baseline</b>, <b style="color:#3f7d52">green = ours</b>.</p>
   <div class="grid g3">
     <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_running_humanoid.mp4" poster="static/videos/cmp_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
     <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_leaping_character.mp4" poster="static/videos/cmp_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>
@@ -99,7 +100,7 @@
   Against the trained ActionMesh backbone, the read-out stays smooth and keeps its vertex identity
   where the backbone drifts or breaks apart. The contrast is objective: on the clips below the
   read-out's per-vertex trajectory acceleration is 1.8 to 2.7 times lower than the backbone.</p>
-  <div class="legend"><span class="ours">Latent-4D read-out (frozen decoder)</span><span class="base">ActionMesh baseline</span></div>
+  <div class="legend"><span class="ours">Latent-4D read-out, ours (left)</span><span class="base">ActionMesh baseline (right)</span></div>
   <div class="grid g3">
     <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_0_003.mp4" poster="static/videos/rovb_0_003.jpg"></video><figcaption>Acrobatic figure &mdash; baseline 2.7&times; jerkier</figcaption></figure>
     <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_2_031.mp4" poster="static/videos/rovb_2_031.jpg"></video><figcaption>Running humanoid &mdash; baseline 1.8&times; jerkier</figcaption></figure>
@@ -117,6 +118,7 @@
   decoder. The galleries below show the decoder-A (TripoSG) read-out on diverse objects, with stable
   vertex-identity colour across the clip; the cross-decoder agreement itself is quantified in the
   tables and the substrate field on the right.</p>
+  <p class="note"><b style="color:#3f7d52">Green bar</b>: Latent-4D read-out (decoder A, TripoSG), ours, no temporal training.</p>
   <div class="grid g2">
     <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_0_007.mp4" poster="static/videos/rdA_0_007.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
     <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_1_014.mp4" poster="static/videos/rdA_1_014.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
@@ -149,6 +151,7 @@
   <h2>Our 4D output</h2>
   <p class="sub">Temporally coherent mesh sequences with stable per-vertex colouring across the whole
   clip, the visible signature of the exact cross-frame correspondence that frame-wise pipelines lack.</p>
+  <p class="note"><b style="color:#3f7d52">Green bar</b>: our Latent-4D-Apex output.</p>
   <div class="grid g3">
     <figure class="card"><video loop muted playsinline data-src="static/videos/ro_running_humanoid.mp4" poster="static/videos/ro_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
     <figure class="card"><video loop muted playsinline data-src="static/videos/ro_leaping_character.mp4" poster="static/videos/ro_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>

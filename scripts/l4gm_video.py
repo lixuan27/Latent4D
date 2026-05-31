@@ -42,14 +42,16 @@ def identity_colors(xyz0):
 
 
 def scatter_frame(base_xyz, apex_xyz, colors, lim, elev=14, azim=40, sz=4):
+    import matplotlib.patches as mpatches
     fig = plt.figure(figsize=(7.2, 3.7))
-    for k, (xyz, lab, col) in enumerate([(base_xyz, "L4GM", "#b00"),
-                                         (apex_xyz, "L4GM + Apex", "#070")]):
+    for k, (xyz, col) in enumerate([(base_xyz, "#b0492f"), (apex_xyz, "#3f7d52")]):
         ax = fig.add_subplot(1, 2, k + 1, projection="3d")
         ax.scatter(xyz[:, 0], xyz[:, 2], xyz[:, 1], c=colors, s=sz, linewidths=0, alpha=0.9)
         ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_zlim(-lim, lim)
         ax.set_axis_off(); ax.view_init(elev=elev, azim=azim)
-        ax.set_title(lab, fontsize=13, color=col, pad=0)
+        # crisp colour bar at the top of this column (label lives in HTML)
+        fig.patches.append(mpatches.Rectangle((k * 0.5 + 0.02, 0.95), 0.46, 0.035,
+                           transform=fig.transFigure, color=col, zorder=5))
     plt.subplots_adjust(left=0, right=1, top=0.93, bottom=0, wspace=0)
     fig.canvas.draw()
     buf = np.frombuffer(fig.canvas.buffer_rgba(), np.uint8).reshape(
