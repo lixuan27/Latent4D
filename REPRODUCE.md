@@ -40,7 +40,15 @@ while single-frame Chamfer spans a 36% range, the substrate signature.
 |---|---|
 | DAVIS-2017 real video | `python scripts/run_apex.py --backbone actionmesh --data davis` |
 | Text-conditioned (Wan2.1 + U2Net + ActionMesh) | `python scripts/run_apex.py --backbone actionmesh --data text2v` |
-| Second backbone L4GM | `python scripts/run_apex.py --backbone l4gm --beta 0.3` |
+| Second backbone L4GM (metric) | `python scripts/l4gm_apex_eval.py` |
+| Second backbone L4GM (videos) | `python scripts/l4gm_video.py` |
+
+L4GM outputs per-frame Gaussians; gsplat rasterization does not JIT-compile in
+our environment, so the L4GM evaluation and the project-page videos use the
+Gaussian centres directly (the trajectory-acceleration quantity). The Apex hook,
+the DINOv2 viewpoint similarity and the single coefficient beta=0.3 are identical
+to the mesh-backbone setting; the average reduction is 42.3%, matching the 42.2%
+on ActionMesh.
 
 ## Notes on faithfulness
 

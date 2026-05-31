@@ -62,6 +62,7 @@
   <div class="stat"><span>4.96 s</span>per 16-frame clip, at least 6x faster</div>
   <div class="stat"><span>-42%</span>motion-aware Chamfer from frozen-weight Apex</div>
   <div class="stat"><span>88.3%</span>of sequences improved by Apex (113 / 128)</div>
+  <div class="stat"><span>-42.3%</span>Apex on a second backbone (L4GM), backbone-agnostic</div>
 </section>
 
 <section>
@@ -100,6 +101,22 @@
   <div class="grid grid2" id="g-triple">
     <figure><video loop muted playsinline data-src="static/videos/xdec_running_humanoid.mp4" poster="static/videos/xdec_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
     <figure><video loop muted playsinline data-src="static/videos/xdec_quadruped.mp4" poster="static/videos/xdec_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Transfer to a second 4D backbone: L4GM</h2>
+  <p>The Apex intervention is defined against an abstract temporal block, not against any one model,
+  so it attaches unchanged to L4GM, a feed-forward 4D <em>Gaussian</em> backbone with a completely
+  different architecture and output representation. With the same DINOv2 viewpoint similarity and the
+  same single coefficient (&beta;=0.3), it cuts per-Gaussian trajectory acceleration by 42.3% on
+  average, almost exactly the 42.2% it delivers on the mesh backbone. Below we show the Gaussian
+  centres over the clip: the untouched L4GM (left) scatters and disperses, while the same model under
+  Apex (right) stays compact and temporally coherent. Point colour encodes anchor-frame identity.</p>
+  <div class="grid grid3" id="g-l4gm">
+    <figure><video loop muted playsinline data-src="static/videos/l4gm_running_humanoid.mp4" poster="static/videos/l4gm_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
+    <figure><video loop muted playsinline data-src="static/videos/l4gm_quadruped.mp4" poster="static/videos/l4gm_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
+    <figure><video loop muted playsinline data-src="static/videos/l4gm_character.mp4" poster="static/videos/l4gm_character.jpg"></video><figcaption>Character</figcaption></figure>
   </div>
 </section>
 
