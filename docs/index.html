@@ -97,15 +97,13 @@
   <h2>The training-free read-out is already coherent</h2>
   <p class="sub">Latent-4D advects an anchor mesh through a frozen decoder with no temporal training.
   Against the trained ActionMesh backbone, the read-out stays smooth and keeps its vertex identity
-  where the backbone drifts or breaks apart. The contrast is objective: per-vertex trajectory
-  acceleration of the read-out is 1.4 to 5 times lower than the backbone on these clips.</p>
+  where the backbone drifts or breaks apart. The contrast is objective: on the clips below the
+  read-out's per-vertex trajectory acceleration is 1.8 to 2.7 times lower than the backbone.</p>
   <div class="legend"><span class="ours">Latent-4D read-out (frozen decoder)</span><span class="base">ActionMesh baseline</span></div>
   <div class="grid g3">
-    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_red_robot.mp4" poster="static/videos/ro_base_red_robot.jpg"></video><figcaption>Action figure (TripoSG read-out)</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_block.mp4" poster="static/videos/ro_base_block.jpg"></video><figcaption>Block character (TripoSG read-out)</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_insect.mp4" poster="static/videos/ro_base_insect.jpg"></video><figcaption>Insect (TripoSG read-out)</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/s1x_base_red_robot.mp4" poster="static/videos/s1x_base_red_robot.jpg"></video><figcaption>Action figure (Step1X read-out)</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/s1x_base_insect.mp4" poster="static/videos/s1x_base_insect.jpg"></video><figcaption>Insect (Step1X read-out)</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_0_003.mp4" poster="static/videos/rovb_0_003.jpg"></video><figcaption>Acrobatic figure &mdash; baseline 2.7&times; jerkier</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_2_031.mp4" poster="static/videos/rovb_2_031.jpg"></video><figcaption>Running humanoid &mdash; baseline 1.8&times; jerkier</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_1_008.mp4" poster="static/videos/rovb_1_008.jpg"></video><figcaption>Articulated object &mdash; baseline 1.8&times; jerkier</figcaption></figure>
   </div>
 </section>
 
@@ -113,15 +111,17 @@
 <section>
   <h2>One read-out, three independent decoders</h2>
   <p class="sub">Finding 1 of the paper. The same read-out runs unchanged on three image-to-3D decoders
-  trained by different groups on different data, TripoSG, Hunyuan3D and the 2025 Step1X-3D, and all
-  three recover the same coherent motion. Their single-frame Chamfer spans a 36% range, yet their
-  motion-aware Chamfer clusters inside [0.390, 0.442] and the two strongest agree to within 0.7%.</p>
-  <div class="grid g3">
-    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_red_robot.mp4" poster="static/videos/dec_red_robot.jpg"></video><figcaption>Action figure</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_insect.mp4" poster="static/videos/dec_insect.jpg"></video><figcaption>Insect</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_block.mp4" poster="static/videos/dec_block.jpg"></video><figcaption>Block character</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_seq007.mp4" poster="static/videos/dec_seq007.jpg"></video><figcaption>Sequence 007</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_seq008.mp4" poster="static/videos/dec_seq008.jpg"></video><figcaption>Sequence 008</figcaption></figure>
+  trained by different groups on different data, TripoSG, Hunyuan3D and the 2025 Step1X-3D. Their
+  single-frame Chamfer spans a 36% range, yet their motion-aware Chamfer clusters inside [0.390, 0.442]
+  and the two strongest agree to within 0.7%, the signature of a shared substrate rather than any one
+  decoder. The galleries below show the decoder-A (TripoSG) read-out on diverse objects, with stable
+  vertex-identity colour across the clip; the cross-decoder agreement itself is quantified in the
+  tables and the substrate field on the right.</p>
+  <div class="grid g2">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_0_007.mp4" poster="static/videos/rdA_0_007.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_1_014.mp4" poster="static/videos/rdA_1_014.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_2_008.mp4" poster="static/videos/rdA_2_008.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rdA_3_015.mp4" poster="static/videos/rdA_3_015.jpg"></video><figcaption>TripoSG read-out</figcaption></figure>
   </div>
 
   <table>
