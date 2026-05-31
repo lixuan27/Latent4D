@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4D Representation is Already Inside Your 3D Decoder</title>
-<meta name="description" content="Latent-4D: reading a temporally coherent mesh sequence out of a frozen image-to-3D decoder, with no temporal training.">
+<meta name="description" content="Latent-4D reads a temporally coherent mesh sequence out of a frozen image-to-3D decoder, with no temporal training.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
@@ -12,20 +15,21 @@
 <header class="hero">
   <div class="wrap">
     <h1>4D Representation is Already Inside Your 3D Decoder</h1>
-    <p class="venue">COLM 2026</p>
+    <p class="venue">Conference on Language Modeling (COLM) 2026</p>
     <p class="authors">Latent-4D Authors</p>
     <nav class="links">
-      <a href="https://github.com/lixuan27/Latent-4D" class="btn">Paper</a>
-      <a href="https://github.com/lixuan27/Latent4D" class="btn">Code</a>
-      <a href="#bibtex" class="btn">BibTeX</a>
+      <a class="btn" href="https://github.com/lixuan27/Latent-4D">Paper</a>
+      <a class="btn ghost" href="https://github.com/lixuan27/Latent4D">Code</a>
+      <a class="btn ghost" href="#bibtex">BibTeX</a>
     </nav>
     <div class="hero-video">
       <video autoplay loop muted playsinline poster="static/videos/cmp_running_humanoid.jpg">
         <source src="static/videos/cmp_running_humanoid.mp4" type="video/mp4">
       </video>
-      <p class="cap">A trained 4D backbone (left) tears apart over the clip; the same frozen
-      backbone under our inference-time intervention (right) stays temporally coherent. Colour
-      encodes anchor-frame vertex identity, so a stable colour pattern means preserved correspondence.</p>
+      <p class="cap">A trained 4D backbone (left of each pair) tears apart over the clip, while the
+      same frozen backbone under our inference-time intervention (right) stays temporally coherent.
+      Surface colour encodes anchor-frame vertex identity, so a stable colour pattern means the
+      cross-frame correspondence is preserved.</p>
     </div>
   </div>
 </header>
@@ -33,117 +37,229 @@
 <main class="wrap">
 
 <section>
-  <h2>TL;DR</h2>
-  <p class="lead">A modern single-image 3D decoder is a continuous map from a latent code and a query
-  point to a signed distance, and its spatial gradient sits inside a small, stable bounded-Lipschitz
-  envelope. That bound is enough to <b>advect an anchor mesh through the signed-distance field of every
-  frame with twenty small Newton steps</b>, producing a mesh sequence with shared vertex indexing and
-  <b>no temporal training</b>. We call this read-out <b>Latent-4D</b>. The 4D capability the community
-  has been training for is, in substantial part, already implicit in any sufficiently regular 3D decoder.</p>
-</section>
-
-<section>
-  <h2>Abstract</h2>
-  <p>Recovering a temporally coherent mesh sequence from a video has typically required dedicated 4D
-  models trained from scratch on large dynamic datasets. We argue that this default quietly retraces
-  work that recent 3D decoders already perform. The bounded-Lipschitz gradient of a frozen
-  image-to-3D decoder is sufficient, by classical existence-and-uniqueness arguments, to advect an
-  anchor mesh through the signed-distance field of every frame, producing a mesh sequence with shared
-  vertex indexing and no temporal training. We complement this read-out with a frozen-weight
-  tangential refinement and an inference-time variant, Latent-4D-Apex, that modulates an external
-  trained 4D model without updating its weights. On a public dynamic-mesh benchmark the frozen
-  read-out attains 0.80 multi-camera mIoU with exact cross-frame vertex correspondence while running
-  at least six times faster than published 4D pipelines, at 4.96 seconds per sixteen-frame clip; the
-  Apex intervention reduces motion-aware Chamfer by 42% without updating any weight.</p>
-</section>
-
-<section class="highlight">
-  <div class="stat"><span>0.80</span>multi-camera mIoU, zero temporal training</div>
-  <div class="stat"><span>4.96 s</span>per 16-frame clip, at least 6x faster</div>
-  <div class="stat"><span>-42%</span>motion-aware Chamfer from frozen-weight Apex</div>
-  <div class="stat"><span>88.3%</span>of sequences improved by Apex (113 / 128)</div>
-  <div class="stat"><span>-42.3%</span>Apex on a second backbone (L4GM), backbone-agnostic</div>
-</section>
-
-<section>
-  <h2>Baseline collapses, our intervention stays coherent</h2>
-  <p>The sequences on which a trained backbone (ActionMesh) and the same backbone under the frozen-weight
-  Apex intervention diverge most sharply. The backbone smears or fragments the geometry; Apex preserves
-  both the shape and the vertex-identity colouring. The two share identical weights.</p>
-  <div class="grid grid2" id="g-compare">
-    <figure><video loop muted playsinline data-src="static/videos/cmp_running_humanoid.mp4" poster="static/videos/cmp_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/cmp_leaping_character.mp4" poster="static/videos/cmp_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/cmp_acrobatic_banana.mp4" poster="static/videos/cmp_acrobatic_banana.jpg"></video><figcaption>Acrobatic figure</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/cmp_quadruped.mp4" poster="static/videos/cmp_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/cmp_creature.mp4" poster="static/videos/cmp_creature.jpg"></video><figcaption>Creature</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/cmp_figure.mp4" poster="static/videos/cmp_figure.jpg"></video><figcaption>Character</figcaption></figure>
+  <div class="narrow">
+    <h2>TL;DR</h2>
+    <p class="lead">A modern single-image 3D decoder is a continuous map from a latent code and a
+    query point to a signed distance, and its spatial gradient sits inside a small, stable
+    bounded-Lipschitz envelope. That bound is enough to <em class="term">advect an anchor mesh
+    through the signed-distance field of every frame with twenty small Newton steps</em>, producing a
+    mesh sequence with shared vertex indexing and <em class="term">no temporal training</em>. We call
+    this read-out <b>Latent-4D</b>. The 4D capability the community has been training for is, in
+    substantial part, already implicit in any sufficiently regular 3D decoder.</p>
   </div>
 </section>
 
+<section>
+  <div class="narrow">
+    <h2>Abstract</h2>
+    <p>Recovering a temporally coherent mesh sequence from a video has typically required dedicated 4D
+    models trained from scratch on large dynamic datasets. We argue that this default quietly retraces
+    work that recent 3D decoders already perform. The bounded-Lipschitz gradient of a frozen
+    image-to-3D decoder is sufficient, by classical existence-and-uniqueness arguments, to advect an
+    anchor mesh through the signed-distance field of every frame, producing a mesh sequence with shared
+    vertex indexing and no temporal training. We complement this read-out with a frozen-weight
+    tangential refinement and an inference-time variant, Latent-4D-Apex, that modulates an external
+    trained 4D model without updating its weights. On a public dynamic-mesh benchmark the frozen
+    read-out attains 0.80 multi-camera mIoU with exact cross-frame vertex correspondence while running
+    at least six times faster than published 4D pipelines, at 4.96 seconds per sixteen-frame clip; the
+    Apex intervention reduces motion-aware Chamfer by 42% without updating any weight.</p>
+  </div>
+</section>
+
+<section>
+  <div class="stats">
+    <div class="stat"><b>0.80</b><span>multi-camera mIoU, zero temporal training</span></div>
+    <div class="stat"><b>4.96s</b><span>per 16-frame clip, at least 6&times; faster</span></div>
+    <div class="stat"><b>&minus;42%</b><span>motion-aware Chamfer from frozen-weight Apex</span></div>
+    <div class="stat"><b>3</b><span>independent decoders, one read-out</span></div>
+  </div>
+</section>
+
+<!-- 1. HEADLINE: Table 1 motion, Apex vs ActionMesh -->
+<section>
+  <h2>Headline: a frozen-weight intervention fixes a trained backbone</h2>
+  <p class="sub">Table 1 of the paper. Each pair shares identical ActionMesh weights; only the
+  inference-time Apex hook differs. The untouched backbone collapses on hard motion; Apex keeps the
+  shape and the vertex-identity colouring coherent.</p>
+  <div class="legend"><span class="base">ActionMesh baseline</span><span class="ours">+ Latent-4D-Apex (ours)</span></div>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_running_humanoid.mp4" poster="static/videos/cmp_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_leaping_character.mp4" poster="static/videos/cmp_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_acrobatic_banana.mp4" poster="static/videos/cmp_acrobatic_banana.jpg"></video><figcaption>Acrobatic figure</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_quadruped.mp4" poster="static/videos/cmp_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_creature.mp4" poster="static/videos/cmp_creature.jpg"></video><figcaption>Creature</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/cmp_figure.mp4" poster="static/videos/cmp_figure.jpg"></video><figcaption>Character</figcaption></figure>
+  </div>
+</section>
+
+<!-- 2. TRAINING-FREE READ-OUT vs baseline -->
+<section>
+  <h2>The training-free read-out is already coherent</h2>
+  <p class="sub">Latent-4D advects an anchor mesh through a frozen decoder with no temporal training.
+  Against the trained ActionMesh backbone, the read-out stays smooth and keeps its vertex identity
+  where the backbone drifts or breaks apart. The contrast is objective: per-vertex trajectory
+  acceleration of the read-out is 1.4 to 5 times lower than the backbone on these clips.</p>
+  <div class="legend"><span class="ours">Latent-4D read-out (frozen decoder)</span><span class="base">ActionMesh baseline</span></div>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_red_robot.mp4" poster="static/videos/ro_base_red_robot.jpg"></video><figcaption>Action figure (TripoSG read-out)</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_block.mp4" poster="static/videos/ro_base_block.jpg"></video><figcaption>Block character (TripoSG read-out)</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_base_insect.mp4" poster="static/videos/ro_base_insect.jpg"></video><figcaption>Insect (TripoSG read-out)</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/s1x_base_red_robot.mp4" poster="static/videos/s1x_base_red_robot.jpg"></video><figcaption>Action figure (Step1X read-out)</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/s1x_base_insect.mp4" poster="static/videos/s1x_base_insect.jpg"></video><figcaption>Insect (Step1X read-out)</figcaption></figure>
+  </div>
+</section>
+
+<!-- 3. MULTI-DECODER / cross-decoder convergence: Table 2, Finding 1 -->
+<section>
+  <h2>One read-out, three independent decoders</h2>
+  <p class="sub">Finding 1 of the paper. The same read-out runs unchanged on three image-to-3D decoders
+  trained by different groups on different data, TripoSG, Hunyuan3D and the 2025 Step1X-3D, and all
+  three recover the same coherent motion. Their single-frame Chamfer spans a 36% range, yet their
+  motion-aware Chamfer clusters inside [0.390, 0.442] and the two strongest agree to within 0.7%.</p>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_red_robot.mp4" poster="static/videos/dec_red_robot.jpg"></video><figcaption>Action figure</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_insect.mp4" poster="static/videos/dec_insect.jpg"></video><figcaption>Insect</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_block.mp4" poster="static/videos/dec_block.jpg"></video><figcaption>Block character</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_seq007.mp4" poster="static/videos/dec_seq007.jpg"></video><figcaption>Sequence 007</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/dec_seq008.mp4" poster="static/videos/dec_seq008.jpg"></video><figcaption>Sequence 008</figcaption></figure>
+  </div>
+
+  <table>
+    <caption>Multi-camera best-view mIoU. The frozen read-out lands near 0.80 on three decoders;
+    its advantage is exact cross-frame correspondence and inference cost, which silhouette mIoU does
+    not reward.</caption>
+    <tr><th>Method</th><th>Type</th><th class="num">n</th><th class="num">mIoU &uarr;</th></tr>
+    <tr><td>ActionMesh (trained 4D backbone)</td><td>trained</td><td class="num">128</td><td class="num">0.888</td></tr>
+    <tr class="ours"><td>ActionMesh + Apex (ours)</td><td>trained, frozen</td><td class="num">128</td><td class="num">0.883</td></tr>
+    <tr class="read"><td>Read-out, TripoSG (frozen)</td><td>zero temporal training</td><td class="num">128</td><td class="num">0.799</td></tr>
+    <tr class="read"><td>Read-out, Hunyuan3D (frozen)</td><td>zero temporal training</td><td class="num">32</td><td class="num">0.806</td></tr>
+    <tr class="read"><td>Read-out, Step1X-3D (frozen)</td><td>zero temporal training</td><td class="num">32</td><td class="num">0.773</td></tr>
+  </table>
+
+  <div class="figrow">
+    <figure class="fig"><img src="static/figures/fig_substrate.png" alt="signed-distance slices and gradient field">
+      <figcaption>The signed-distance slices and inward gradient field of two frozen decoders on a fixed
+      plane. The fields share the same global structure inside the same bounded range, the geometric
+      content of the bounded-Lipschitz assumption that makes the read-out converge across decoders.</figcaption></figure>
+  </div>
+</section>
+
+<!-- 4. OUR 4D OUTPUT GALLERY -->
 <section>
   <h2>Our 4D output</h2>
-  <p>Temporally coherent mesh sequences with stable per-vertex colouring across the clip, the visible
-  signature of the exact cross-frame correspondence that frame-wise pipelines lack.</p>
-  <div class="grid grid3" id="g-single">
-    <figure><video loop muted playsinline data-src="static/videos/ro_running_humanoid.mp4" poster="static/videos/ro_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/ro_leaping_character.mp4" poster="static/videos/ro_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/ro_red_robot.mp4" poster="static/videos/ro_red_robot.jpg"></video><figcaption>Action figure</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/ro_purple_insect.mp4" poster="static/videos/ro_purple_insect.jpg"></video><figcaption>Insect</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/ro_creature.mp4" poster="static/videos/ro_creature.jpg"></video><figcaption>Creature</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/ro_figure.mp4" poster="static/videos/ro_figure.jpg"></video><figcaption>Character</figcaption></figure>
+  <p class="sub">Temporally coherent mesh sequences with stable per-vertex colouring across the whole
+  clip, the visible signature of the exact cross-frame correspondence that frame-wise pipelines lack.</p>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_running_humanoid.mp4" poster="static/videos/ro_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_leaping_character.mp4" poster="static/videos/ro_leaping_character.jpg"></video><figcaption>Leaping character</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_red_robot.mp4" poster="static/videos/ro_red_robot.jpg"></video><figcaption>Action figure</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_purple_insect.mp4" poster="static/videos/ro_purple_insect.jpg"></video><figcaption>Insect</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_creature.mp4" poster="static/videos/ro_creature.jpg"></video><figcaption>Creature</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/ro_figure.mp4" poster="static/videos/ro_figure.jpg"></video><figcaption>Character</figcaption></figure>
+  </div>
+  <h3>Read-out, trained backbone, and Apex side by side</h3>
+  <div class="grid g2">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/xdec_running_humanoid.mp4" poster="static/videos/xdec_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/xdec_quadruped.mp4" poster="static/videos/xdec_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
   </div>
 </section>
 
+<!-- 5. WHAT TRAINING ADDS: Finding 2 -->
 <section>
-  <h2>Read-out, trained backbone, and Apex side by side</h2>
-  <p>The training-free read-out already produces coherent motion; the trained backbone refines
-  single-frame geometry; Apex combines the strengths of both at inference time.</p>
-  <div class="grid grid2" id="g-triple">
-    <figure><video loop muted playsinline data-src="static/videos/xdec_running_humanoid.mp4" poster="static/videos/xdec_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/xdec_quadruped.mp4" poster="static/videos/xdec_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
+  <h2>What additional training actually adds</h2>
+  <p class="sub">Finding 2 of the paper. Once the substrate supplies the baseline motion, the residual
+  gap to a trained backbone lives on a single axis, the temporal coherence of the latent stream. A
+  one-parameter hand-crafted smoother closes about 30% of the gap and saturates; four structurally
+  different couplings all plateau at the same place, the empirical signature of an information-theoretic
+  ceiling on what can be recovered without learning.</p>
+  <div class="figrow g2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <figure class="fig"><img src="static/figures/fig_smoothing_curve.png" alt="latent smoothing sweep">
+      <figcaption>Latent-smoothing sweep. The motion-aware Chamfer traces an inverse-U with optimum at
+      &alpha;=0.5, recovering about 30% of the gap to ActionMesh and degrading past the maximum.</figcaption></figure>
+    <figure class="fig"><img src="static/figures/fig_coupling_bar.png" alt="coupling saturation">
+      <figcaption>Four structurally distinct hand-crafted couplings saturate inside the same plateau,
+      identifying the residual gap as the genuine value of learned cross-frame coupling.</figcaption></figure>
   </div>
 </section>
 
+<!-- 6. SPEED: Table 3 -->
+<section>
+  <h2>An order-of-magnitude faster</h2>
+  <p class="sub">The read-out runs one decoder forward pass per frame plus twenty Newton steps, with no
+  per-scene optimisation and no temporal denoiser. With early exit, end-to-end inference is 4.96
+  seconds per sixteen-frame clip, at least six times faster than the fastest published feed-forward 4D
+  method and more than three orders of magnitude faster than score-distillation pipelines.</p>
+  <div class="figrow g2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <figure class="fig"><img src="static/figures/fig_speed_bar.png" alt="inference time per clip"><figcaption>End-to-end inference time per 16-frame clip on one H200 (log scale).</figcaption></figure>
+    <figure class="fig"><img src="static/figures/fig_pareto.png" alt="speed-quality pareto"><figcaption>Speed versus quality. The Latent-4D variants sit on the favourable corner of the trade-off.</figcaption></figure>
+  </div>
+  <table>
+    <caption>End-to-end inference time for a 16-frame clip at 512&times;512 on one H200 GPU.</caption>
+    <tr><th>Method</th><th class="num">Time / clip</th><th class="num">Speedup vs slowest</th></tr>
+    <tr><td>Consistent4D</td><td class="num">7200 s</td><td class="num">1&times;</td></tr>
+    <tr><td>DreamGaussian4D</td><td class="num">300 s</td><td class="num">24&times;</td></tr>
+    <tr><td>ActionMesh (trained 4D backbone)</td><td class="num">120 s</td><td class="num">60&times;</td></tr>
+    <tr><td>L4GM</td><td class="num">30 s</td><td class="num">240&times;</td></tr>
+    <tr class="read"><td>Latent-4D (frozen substrate, ours)</td><td class="num">9.4 s</td><td class="num">766&times;</td></tr>
+    <tr class="ours"><td>Latent-4D + early exit (ours)</td><td class="num">4.96 s</td><td class="num">1452&times;</td></tr>
+  </table>
+</section>
+
+<!-- 7. MATERIAL-POINT correspondence -->
+<section>
+  <h2>Material-point correspondence and tangential refinement</h2>
+  <p class="sub">The bare read-out transports vertices along the surface normal, so it recovers normal
+  motion but not the in-surface tangential component. An optional frozen-weight refinement draws the
+  tangential signal from the same DINOv2 features, cutting the tangential error by roughly a third and
+  closing essentially the full gap on a controlled rotation stress test.</p>
+  <div class="figrow g2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <figure class="fig"><img src="static/figures/fig_tangential_bar.png" alt="tangential decomposition">
+      <figcaption>Normal and tangential decomposition of the motion-aware Chamfer. The refinement cuts
+      the tangential component while leaving the normal component unchanged.</figcaption></figure>
+    <figure class="fig"><img src="static/figures/fig_keypoint_curve.png" alt="keypoint tracking">
+      <figcaption>3D end-point error of hand-annotated landmark vertices over the clip. The refined
+      read-out tracks the trained reference while using no temporal training.</figcaption></figure>
+  </div>
+  <table>
+    <caption>Mean angular error of vertex trajectories under a controlled 0 to 90 degree rotation.</caption>
+    <tr><th>Method</th><th class="num">Mean angular error &darr;</th></tr>
+    <tr><td>Latent-4D, substrate only</td><td class="num">41.8&deg;</td></tr>
+    <tr><td>ActionMesh (trained 4D backbone)</td><td class="num">11.2&deg;</td></tr>
+    <tr class="read"><td>Latent-4D + refinement (ours)</td><td class="num">9.4&deg;</td></tr>
+    <tr class="ours"><td>ActionMesh + Apex (ours)</td><td class="num">7.8&deg;</td></tr>
+  </table>
+</section>
+
+<!-- 8. SECOND BACKBONE L4GM -->
 <section>
   <h2>Transfer to a second 4D backbone: L4GM</h2>
-  <p>The Apex intervention is defined against an abstract temporal block, not against any one model,
-  so it attaches unchanged to L4GM, a feed-forward 4D <em>Gaussian</em> backbone with a completely
-  different architecture and output representation. With the same DINOv2 viewpoint similarity and the
-  same single coefficient (&beta;=0.3), it cuts per-Gaussian trajectory acceleration by 42.3% on
-  average, almost exactly the 42.2% it delivers on the mesh backbone. Below we show the Gaussian
-  centres over the clip: the untouched L4GM (left) scatters and disperses, while the same model under
-  Apex (right) stays compact and temporally coherent. Point colour encodes anchor-frame identity.</p>
-  <div class="grid grid3" id="g-l4gm">
-    <figure><video loop muted playsinline data-src="static/videos/l4gm_running_humanoid.mp4" poster="static/videos/l4gm_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/l4gm_quadruped.mp4" poster="static/videos/l4gm_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
-    <figure><video loop muted playsinline data-src="static/videos/l4gm_character.mp4" poster="static/videos/l4gm_character.jpg"></video><figcaption>Character</figcaption></figure>
+  <p class="sub">The Apex intervention is defined against an abstract temporal block, not against one
+  model, so it attaches unchanged to L4GM, a feed-forward 4D Gaussian backbone with a different
+  architecture and output. With the same DINOv2 similarity and the same coefficient (&beta;=0.3) it
+  cuts per-Gaussian trajectory acceleration by 42.3%, almost exactly the 42.2% it delivers on the mesh
+  backbone. We show the Gaussian centres over the clip: the untouched L4GM scatters, the Apex variant
+  stays compact and coherent.</p>
+  <div class="legend"><span class="base">L4GM baseline</span><span class="ours">L4GM + Apex (ours)</span></div>
+  <div class="grid g3">
+    <figure class="card"><video loop muted playsinline data-src="static/videos/l4gm_running_humanoid.mp4" poster="static/videos/l4gm_running_humanoid.jpg"></video><figcaption>Running humanoid</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/l4gm_quadruped.mp4" poster="static/videos/l4gm_quadruped.jpg"></video><figcaption>Quadruped</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/l4gm_character.mp4" poster="static/videos/l4gm_character.jpg"></video><figcaption>Character</figcaption></figure>
   </div>
 </section>
 
+<!-- 9. MAIN TABLE -->
 <section>
-  <h2>Method</h2>
-  <p>We extract a single anchor mesh from the first frame, then transport its vertices through the
-  signed-distance field of every later frame by a Newton gradient flow (Algorithm 1). A one-parameter
-  latent smoother injects temporal coherence. The inference-time Apex hook (Algorithm 2) modulates a
-  trained backbone's temporal block with DINOv2 viewpoint similarity, and an optional tangential
-  refinement (Algorithm 3) recovers in-surface motion from the same frozen features. No weight is
-  trained anywhere in the pipeline.</p>
-</section>
-
-<section>
-  <h2>Quantitative highlights</h2>
+  <h2>Main comparison (Chamfer family)</h2>
   <table>
-    <tr><th>Method</th><th>cd<sub>3d</sub></th><th>cd<sub>4d</sub></th><th>cd<sub>motion</sub></th></tr>
-    <tr><td>ActionMesh (trained backbone)</td><td>0.0755</td><td>0.1184</td><td>0.2724</td></tr>
-    <tr><td>Read-out, TripoSG (frozen)</td><td>0.0873</td><td>0.1667</td><td>0.3904</td></tr>
-    <tr><td>Read-out, Step1X-3D (frozen)</td><td>0.0891</td><td>0.1632</td><td>0.3932</td></tr>
-    <tr class="best"><td>ActionMesh + Apex (ours)</td><td>0.0546</td><td>0.0873</td><td>0.1574</td></tr>
-  </table>
-  <table>
-    <tr><th>Pipeline</th><th>Time / 16-frame clip</th></tr>
-    <tr><td>Consistent4D</td><td>7200 s</td></tr>
-    <tr><td>ActionMesh (trained backbone)</td><td>120 s</td></tr>
-    <tr class="best"><td>Latent-4D + early exit (ours)</td><td>4.96 s</td></tr>
+    <caption>Lower is better. Per-frame, backbone and Apex rows use all 128 sequences; frozen read-out
+    rows use the subset with ground-truth point clouds (116 for TripoSG, 32 for Hunyuan3D and Step1X).</caption>
+    <tr><th>Method</th><th class="num">cd<sub>3d</sub></th><th class="num">cd<sub>4d</sub></th><th class="num">cd<sub>motion</sub></th></tr>
+    <tr><td>Per-frame 3D pipeline</td><td class="num">0.0823</td><td class="num">N/A</td><td class="num">N/A</td></tr>
+    <tr><td>ActionMesh (trained 4D backbone)</td><td class="num">0.0755</td><td class="num">0.1184</td><td class="num">0.2724</td></tr>
+    <tr class="read"><td>Read-out, TripoSG (frozen)</td><td class="num">0.0873</td><td class="num">0.1667</td><td class="num">0.3904</td></tr>
+    <tr class="read"><td>Read-out, Hunyuan3D (frozen)</td><td class="num">0.1190</td><td class="num">0.2186</td><td class="num">0.4421</td></tr>
+    <tr class="read"><td>Read-out, Step1X-3D (frozen)</td><td class="num">0.0891</td><td class="num">0.1632</td><td class="num">0.3932</td></tr>
+    <tr class="ours"><td>ActionMesh + Apex (ours)</td><td class="num">0.0546</td><td class="num">0.0873</td><td class="num">0.1574</td></tr>
   </table>
 </section>
 
@@ -160,7 +276,7 @@
 </main>
 
 <footer><div class="wrap">
-  <p>Code and paper: <a href="https://github.com/lixuan27/Latent4D">github.com/lixuan27/Latent4D</a>.
+  <p>Code and paper at <a href="https://github.com/lixuan27/Latent4D">github.com/lixuan27/Latent4D</a>.
   Released under the MIT License; third-party models retain their own licenses.</p>
 </div></footer>
 
