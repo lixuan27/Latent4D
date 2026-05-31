@@ -1,0 +1,28 @@
+# Frozen-model paths (edit after running scripts/download_assets.sh)
+decoders:
+  triposg:   pretrained-model/triposg
+  hunyuan3d: pretrained-model/hunyuan3d
+  step1x:    pretrained-model/step1x3d
+backbones:
+  actionmesh: pretrained-model/actionmesh
+  l4gm:       pretrained-model/l4gm
+features:
+  dinov2: facebook/dinov2-base
+
+# Read-out hyperparameters (held fixed throughout the paper)
+readout:
+  K: 20
+  eta: 0.7
+  eps: 1.0e-6
+  delta: 0.05
+  alpha: 0.5
+
+# Apex intervention
+apex:
+  beta: 0.3
+
+# Benchmark
+benchmark:
+  root: data/actionbench/data
+  num_frames: 16
+  resolution: 512

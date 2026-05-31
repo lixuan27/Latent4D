@@ -1,0 +1,22 @@
+# Core
+torch>=2.1
+numpy
+trimesh
+scipy
+scikit-image
+matplotlib
+tqdm
+pyyaml
+
+# Geometry / rendering
+pytorch3d            # mesh rasterization for qualitative renders and videos
+imageio
+imageio-ffmpeg       # mp4 encoding for the project-page videos
+
+# Features / models (install per the official instructions of each decoder)
+transformers
+huggingface_hub
+einops
+
+# Optional, only for the L4GM Gaussian backbone
+# gsplat>=1.5

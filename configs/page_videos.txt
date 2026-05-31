@@ -1,0 +1,19 @@
+# Dramatic baseline-vs-Apex comparisons (ActionMesh collapses, +Apex stays coherent)
+compare|000-031_cc1f905b148c4378ad46a40da72e839f|cmp_running_humanoid
+compare|000-075_46f5711e3ac04900a49732d78f4f64d8|cmp_leaping_character
+compare|000-003_90288386ca914411ab648f08db734fea|cmp_acrobatic_banana
+compare|000-004_ab9192b6bc8f49e3baed63e984c7073a|cmp_quadruped
+compare|000-130_94be397f8db74f7c9c06263aaf988532|cmp_creature
+compare|000-128_030d9e43df9840dbb57f599843d6953a|cmp_figure
+
+# Our 4D output (coherent, vertex-identity colour stable)
+single|000-031_cc1f905b148c4378ad46a40da72e839f|ro_running_humanoid
+single|000-075_46f5711e3ac04900a49732d78f4f64d8|ro_leaping_character
+single|000-017_6130f5686df241d3bd8a1324d63781d2|ro_red_robot
+single|000-004_59599287510e43649360b850d56119d5|ro_purple_insect
+single|000-130_94be397f8db74f7c9c06263aaf988532|ro_creature
+single|000-128_030d9e43df9840dbb57f599843d6953a|ro_figure
+
+# Cross-decoder / read-out vs trained backbone vs Apex
+triple|000-031_cc1f905b148c4378ad46a40da72e839f|xdec_running_humanoid
+triple|000-004_ab9192b6bc8f49e3baed63e984c7073a|xdec_quadruped

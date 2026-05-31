@@ -1,0 +1,28 @@
+# Never commit secrets
+*.env
+*.token
+**/tokens*
+.secrets/
+*ghp_*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+env/
+
+# Large artifacts (download or render locally)
+pretrained-model/
+checkpoints/
+*.safetensors
+*.ckpt
+*.pth
+data/actionbench/
+outputs/
+runs/
+wandb/
+
+# OS
+.DS_Store
