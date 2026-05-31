@@ -15,7 +15,7 @@
 <header class="hero">
   <div class="wrap">
     <h1>4D Representation is Already Inside Your 3D Decoder</h1>
-    <p class="venue">Conference on Language Modeling (COLM) 2026</p>
+    <p class="venue">Tech Report, 2026</p>
     <p class="authors">Latent-4D Authors</p>
     <nav class="links">
       <a class="btn" href="https://github.com/lixuan27/Latent-4D">Paper</a>
@@ -189,6 +189,9 @@
   per-scene optimisation and no temporal denoiser. With early exit, end-to-end inference is 4.96
   seconds per sixteen-frame clip, at least six times faster than the fastest published feed-forward 4D
   method and more than three orders of magnitude faster than score-distillation pipelines.</p>
+  <div class="grid" style="grid-template-columns:1fr">
+    <figure class="card"><video loop autoplay muted playsinline data-src="static/videos/speed_race.mp4" poster="static/videos/speed_race.jpg"></video><figcaption>A wall-clock race on one clip (playback accelerated; the labels are the real per-clip inference seconds). The trained ActionMesh backbone keeps computing for 120&thinsp;s, while the Latent-4D substrate finishes its 4D result in 9.4&thinsp;s and the early-exit variant in 4.96&thinsp;s, roughly 13&times; and 24&times; faster. The two Latent-4D panels already loop a moving 4D mesh long before the backbone returns anything.</figcaption></figure>
+  </div>
   <div class="figrow g2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
     <figure class="fig"><img src="static/figures/fig_speed_bar.png" alt="inference time per clip"><figcaption>End-to-end inference time per 16-frame clip on one H200 (log scale).</figcaption></figure>
     <figure class="fig"><img src="static/figures/fig_pareto.png" alt="speed-quality pareto"><figcaption>Speed versus quality. The Latent-4D variants sit on the favourable corner of the trade-off.</figcaption></figure>
@@ -228,35 +231,6 @@
     <tr class="read"><td>Latent-4D + refinement (ours)</td><td class="num">9.4&deg;</td></tr>
     <tr class="ours"><td>ActionMesh + Apex (ours)</td><td class="num">7.8&deg;</td></tr>
   </table>
-</section>
-
-<!-- 7b. GENERATION PROCESS -->
-<section>
-  <h2>The image-to-4D process, side by side</h2>
-  <p class="sub">The full pipeline on a text-to-video input: each column advances through the same
-  sixteen frames. From the input silhouette (left), the untouched ActionMesh backbone (middle) builds
-  a mesh that wobbles and tears as the motion gets extreme, while the same backbone under the
-  frozen-weight Apex hook (right) keeps a coherent, stably-coloured surface throughout. On this clip
-  the Apex trajectory is five times smoother than the baseline.</p>
-  <div class="grid" style="grid-template-columns:1fr">
-    <figure class="card"><video loop muted playsinline data-src="static/videos/process_cartwheel.mp4" poster="static/videos/process_cartwheel.jpg"></video><figcaption>Input video &rarr; ActionMesh baseline &rarr; Latent-4D-Apex, over the whole clip</figcaption></figure>
-  </div>
-</section>
-
-<!-- 7c. DAVIS ZERO-SHOT -->
-<section>
-  <h2>Zero-shot transfer to real video (DAVIS-2017)</h2>
-  <p class="sub">The Apex hook was calibrated only on the synthetic benchmark, yet it transfers
-  unchanged, with the same four scalars, to real-world DAVIS-2017 footage it never saw. On the hard
-  scenes below it lifts the multi-camera mIoU by up to +9.5 points and makes the trajectory up to 3
-  times smoother. The measured per-scene gains are listed under each clip.</p>
-  <div class="legend"><span class="base">ActionMesh baseline</span><span class="ours">+ Apex (ours)</span></div>
-  <div class="grid g2">
-    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_dance-twirl.mp4" poster="static/videos/davis_dance-twirl.jpg"></video><figcaption>dance-twirl &mdash; mIoU +9.5pp, 2.4&times; smoother</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_camel.mp4" poster="static/videos/davis_camel.jpg"></video><figcaption>camel &mdash; mIoU +6.6pp</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_soapbox.mp4" poster="static/videos/davis_soapbox.jpg"></video><figcaption>soapbox &mdash; mIoU +6.3pp, 1.8&times; smoother</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/davis_breakdance.mp4" poster="static/videos/davis_breakdance.jpg"></video><figcaption>breakdance &mdash; 3.0&times; smoother</figcaption></figure>
-  </div>
 </section>
 
 <!-- 7d. TEXT-TO-4D -->
