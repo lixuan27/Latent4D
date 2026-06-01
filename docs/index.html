@@ -102,12 +102,13 @@
   <p class="sub">Latent-4D advects an anchor mesh through a frozen decoder with no temporal training.
   Against the trained ActionMesh backbone, the read-out stays smooth and keeps its vertex identity
   where the backbone drifts or breaks apart. The contrast is objective: on the clips below the
-  read-out's per-vertex trajectory acceleration is 1.8 to 2.7 times lower than the backbone.</p>
+  read-out's per-vertex trajectory acceleration is 1.3 to 1.8 times lower than the backbone, and its
+  surface contour stays crisp where the backbone smears.</p>
   <div class="legend"><span class="ours">Latent-4D read-out, ours (left)</span><span class="base">ActionMesh baseline (right)</span></div>
   <div class="grid g3">
-    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_0_003.mp4" poster="static/videos/rovb_0_003.jpg"></video><figcaption>Acrobatic figure &mdash; baseline 2.7&times; jerkier</figcaption></figure>
-    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_2_031.mp4" poster="static/videos/rovb_2_031.jpg"></video><figcaption>Running humanoid &mdash; baseline 1.8&times; jerkier</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_figure.mp4" poster="static/videos/rovb_figure.jpg"></video><figcaption>Dancing figure &mdash; baseline 1.7&times; jerkier</figcaption></figure>
     <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_1_008.mp4" poster="static/videos/rovb_1_008.jpg"></video><figcaption>Articulated object &mdash; baseline 1.8&times; jerkier</figcaption></figure>
+    <figure class="card"><video loop muted playsinline data-src="static/videos/rovb_creature.mp4" poster="static/videos/rovb_creature.jpg"></video><figcaption>Insect creature &mdash; baseline 1.3&times; jerkier</figcaption></figure>
   </div>
 </section>
 
